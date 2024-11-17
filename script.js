@@ -1,32 +1,36 @@
-// Smooth scrolling for navigation
-function scrollToSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    window.scrollTo({
-        top: section.offsetTop - 50, // Offset for header
-        behavior: "smooth"
-    });
-}
+// Fetch Dynamic Content
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("./data/projects.json")
+        .then(response => response.json())
+        .then(data => {
+            // Bio
+            document.getElementById("name").innerText = data.name;
+            document.getElementById("summary").innerText = data.summary;
 
-// Contact form submission handling
-document.getElementById('contactForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the form from submitting the traditional way
+            // Skills
+            const skillsList = document.getElementById("skills-list");
+            data.skills.forEach(skill => {
+                const li = document.createElement("li");
+                li.innerText = skill;
+                skillsList.appendChild(li);
+            });
 
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const message = document.getElementById('message').value;
-
-    // Validate form inputs (you can extend this to more sophisticated validation)
-    if (!name || !email || !message) {
-        alert("Please fill in all fields.");
-        return;
-    }
-
-    // For now, we'll log the form data to the console (later you could integrate with a backend or API)
-    console.log("Form Submitted:", { name, email, message });
-
-    // Show success message
-    alert("Your message has been sent successfully!");
-
-    // Optionally, reset the form fields after submission
-    document.getElementById('contactForm').reset();
+            // Projects
+            const projectsContainer = document.getElementById("projects-container");
+            data.projects.forEach(project => {
+                const div = document.createElement("div");
+                div.className = "project";
+                div.innerHTML = `
+                    <h4>${project.title}</h4>
+                    <p>${project.description}</p>
+                    <a href="${project.link}" target="_blank">View Project</a>
+                `;
+                projectsContainer.appendChild(div);
+            });
+        });
 });
+
+// Dark Mode Toggle
+function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode-active");
+}
